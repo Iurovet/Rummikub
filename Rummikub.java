@@ -1,7 +1,25 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Rummikub {
+    public static HashMap<String, Tile> allocateTilesAtStart(HashMap<String, Tile> tiles, int numPlayers) {
+        ArrayList<String> freeTiles = new ArrayList<String>(); // keys only
+        for (String s1 : tiles.keySet()) {
+            freeTiles.add(s1);
+        }
+        
+        for (int i = 0; i < numPlayers; ++i) {
+            for (int j = 0; j < 14; ++j) {
+                String chosenKey = freeTiles.get(getRandom(0, freeTiles.size() - 1));
+                tiles.get(chosenKey).setLocation("P" + (i + 1));
+                freeTiles.remove(chosenKey);
+            }
+        }
+        
+        return tiles;
+    }
+    
     // Used for selecting both the starting player and tiles from pool
     public static int getRandom(int min, int max) {
         /* 
@@ -73,5 +91,7 @@ public class Rummikub {
         // 2nd parameter in setStartPlayer() allows a random player to start
         int numPlayers = setNumPlayers(scnr);
         int startPlayer = setStartPlayer(scnr, numPlayers);
+
+        tiles = allocateTilesAtStart(tiles, numPlayers);
     }
 }
