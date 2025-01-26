@@ -90,8 +90,16 @@ public class Rummikub {
 
         // 2nd parameter in setStartPlayer() allows a random player to start
         int numPlayers = setNumPlayers(scnr);
-        int startPlayer = setStartPlayer(scnr, numPlayers);
-
+        int currPlayer = setStartPlayer(scnr, numPlayers); // Initialised then cycles through.
         tiles = allocateTilesAtStart(tiles, numPlayers);
+
+        boolean gameFinished = false;
+        while (!gameFinished) {
+
+            // Increment player number (or set to 1 if maxed out)
+            currPlayer = (currPlayer < numPlayers) ? currPlayer + 1 : 0;
+        }
+
+        System.out.println("Player " + currPlayer + " won!");
     }
 }
