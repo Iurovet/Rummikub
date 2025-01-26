@@ -19,6 +19,14 @@ public class Rummikub {
         
         return tiles;
     }
+
+    public static boolean emptyRack (HashMap<String, Tile> tiles, int currPlayer) {
+        for (Tile t1 : tiles.values()) {
+            if (t1.getLocation().equals("P" + currPlayer)) { return false; }
+        }
+
+        return true;
+    }
     
     // Used for selecting both the starting player and tiles from pool
     public static int getRandom(int min, int max) {
@@ -92,12 +100,16 @@ public class Rummikub {
         int numPlayers = setNumPlayers(scnr);
         int currPlayer = setStartPlayer(scnr, numPlayers); // Initialised then cycles through.
         tiles = allocateTilesAtStart(tiles, numPlayers);
-
+        
         boolean gameFinished = false;
         while (!gameFinished) {
-
-            // Increment player number (or set to 1 if maxed out)
-            currPlayer = (currPlayer < numPlayers) ? currPlayer + 1 : 0;
+            if (emptyRack(tiles, currPlayer)) {
+                gameFinished = true;
+            }
+            else {
+                // Increment player number (or set to 1 if maxed out)
+                currPlayer = (currPlayer < numPlayers) ? currPlayer + 1 : 1;
+            }
         }
 
         System.out.println("Player " + currPlayer + " won!");
