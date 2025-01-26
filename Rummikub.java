@@ -2,6 +2,18 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Rummikub {
+    // Used for selecting both the starting player and tiles from pool
+    public static int getRandom(int min, int max) {
+        /* 
+         * Since Math.random() returns a real number in range [0, 1), the multiplier
+         * acts as the number of possible numbers to choose from. As the list of possible
+         * numbers is contiguous (with both parameters inclusive), the minimum value
+         * can be set by adding it to the result. Therefore, a number in range [min, max]
+         * gets returned.
+         */
+        return (int)(Math.random() * (max - min + 1)) + min;
+    }
+
     public static int setNumPlayers(Scanner scnr) {
         System.out.println("Welcome to Rummikub. Select between 2-4 players");
         int numPlayers = scnr.nextInt();
@@ -10,6 +22,27 @@ public class Rummikub {
             numPlayers = scnr.nextInt();
         }
         return numPlayers;
+    }
+
+    public static int setStartPlayer(Scanner scnr, int numPlayers) {
+        System.out.println("Choose a starting player (or 5 for random)");
+        int startPlayer = scnr.nextInt();
+        
+        /*
+         * Accepted values are in range [1, numPlayers] and 5. Cannot simply check for
+         * 2 sides of a range because numPlayers is in range [2, 4] i.e. not always 4.
+         */
+        while ((startPlayer < 1) || ((startPlayer > numPlayers) && (startPlayer != 5))) {
+            System.out.println("Error: Must select a valid number (or 5 for random)");
+            startPlayer = scnr.nextInt();
+        }
+
+        if (startPlayer == 5) {// Inform of starting player, if randomly selected
+            startPlayer = getRandom(1, 4);
+            System.out.println("Player " + startPlayer + " is starting");
+        }
+        
+        return startPlayer;
     }
     
     public static HashMap<String, Tile> setupTiles() {
@@ -37,6 +70,8 @@ public class Rummikub {
         HashMap<String, Tile> tiles = setupTiles();
         Scanner scnr = new Scanner(System.in);
 
+        // 2nd parameter in setStartPlayer() allows a random player to start
         int numPlayers = setNumPlayers(scnr);
+        int startPlayer = setStartPlayer(scnr, numPlayers);
     }
 }
