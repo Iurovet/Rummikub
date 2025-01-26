@@ -4,12 +4,12 @@ public class Rummikub {
     public static HashMap<String, Tile> setupTiles() {
         HashMap<String, Tile> tiles = new HashMap<String, Tile>();
 
-        final String[] colours = {"Blue", "Orange", "Red", "Black"};
-        final String[] identifiers = {"a", "b"};
+        final String[] COLOURS = {"Blue", "Orange", "Red", "Black"};
+        final String[] IDENTIFIERS = {"a", "b"};
 
-        for (String s1: colours) {
+        for (String s1: COLOURS) {
             for (int i = 1; i <= 13; i++) {
-                for (String s2 : identifiers) {
+                for (String s2 : IDENTIFIERS) {
                     Tile t1 = new Tile(s1, "non-joker", i, s2);
                     tiles.put(s1 + " " + i + s2, t1);
                 }
