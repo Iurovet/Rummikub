@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Rummikub {
@@ -38,6 +39,33 @@ public class Rummikub {
          * gets returned.
          */
         return (int)(Math.random() * (max - min + 1)) + min;
+    }
+
+    public static void printPlayerTiles (HashMap<String, Tile> tiles, int currPlayer) {
+        ArrayList<String> freeTiles = new ArrayList<String>(); // keys only
+        
+        // Get both keys and values in one shot
+        for (Map.Entry<String, Tile> entry : tiles.entrySet()) {
+            String key = entry.getKey();
+            Tile value = entry.getValue();
+
+            if (value.getLocation().equals("P" + currPlayer)) {
+                freeTiles.add(key);
+            }
+        }
+
+        // Sort by colour (numbers are not yet touched).
+        freeTiles.sort(null);
+
+        System.out.println("Player " + currPlayer + " has the following tiles: ");
+        for (String s1 : freeTiles) {
+            /*
+             * Tile names with jokers should be printed out in full. Those with numbers
+             * should be printed out without the a or b at the end.
+             */
+            String tileNoID = s1.substring(0, s1.length() - 1);
+            System.out.println(s1.indexOf("joker") == -1 ? tileNoID : s1);
+        }
     }
 
     public static int setNumPlayers(Scanner scnr) {
@@ -103,6 +131,8 @@ public class Rummikub {
         
         boolean gameFinished = false;
         while (!gameFinished) {
+            printPlayerTiles(tiles, currPlayer);
+            
             if (!emptyRack(tiles, currPlayer)) {
                 gameFinished = true;
             }
