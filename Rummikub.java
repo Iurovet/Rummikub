@@ -1,6 +1,17 @@
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Rummikub {
+    public static int setNumPlayers(Scanner scnr) {
+        System.out.println("Welcome to Rummikub. Select between 2-4 players");
+        int numPlayers = scnr.nextInt();
+        while ((numPlayers < 2) || (numPlayers > 4)) {
+            System.out.println("Error: Must select between 2-4 players");
+            numPlayers = scnr.nextInt();
+        }
+        return numPlayers;
+    }
+    
     public static HashMap<String, Tile> setupTiles() {
         HashMap<String, Tile> tiles = new HashMap<String, Tile>();
 
@@ -24,5 +35,8 @@ public class Rummikub {
 
     public static void main(String[] args) {
         HashMap<String, Tile> tiles = setupTiles();
+        Scanner scnr = new Scanner(System.in);
+
+        int numPlayers = setNumPlayers(scnr);
     }
 }
