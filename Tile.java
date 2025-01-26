@@ -2,7 +2,7 @@ public class Tile {
     private String colour, type;
     private int number; // Non-jokers only
     private String numberID; // Each colour-number combination has 2 tiles
-    private String location = "pool"; // Pool, p(1-4) or play
+    private String location = "Pool"; // Pool, P(1-4) or Play
     
     public Tile (String colour, String type) {// Jokers only
         this.colour = colour; // Red or black
