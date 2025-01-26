@@ -103,7 +103,7 @@ public class Rummikub {
         
         boolean gameFinished = false;
         while (!gameFinished) {
-            if (emptyRack(tiles, currPlayer)) {
+            if (!emptyRack(tiles, currPlayer)) {
                 gameFinished = true;
             }
             else {
