@@ -41,8 +41,32 @@ public class Rummikub {
         return (int)(Math.random() * (max - min + 1)) + min;
     }
 
+    public static void printBoard (ArrayList<ArrayList<String>> sequences) {
+        System.out.println();
+        
+        int i = 0;
+        for (i = 0; i < sequences.size(); ++i) {
+            System.out.print("Sequence " + (i + 1) + ": <");
+         
+            for (int j = 0; j < sequences.get(i).size(); ++i) {
+                System.out.print(sequences.get(i));
+                if (j < sequences.get(i).size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            
+            System.out.println(">\n");
+        }
+
+        // Simple way of checking the size. Obviously requires pre-loop initalisation
+        if (i == 0) {
+            System.out.println("Board is empty");
+        }
+    }
+
     public static void printPlayerTiles (HashMap<String, Tile> tiles, int currPlayer) {
         ArrayList<String> freeTiles = new ArrayList<String>(); // keys only
+        System.out.println();
         
         // Get both keys and values in one shot
         for (Map.Entry<String, Tile> entry : tiles.entrySet()) {
@@ -122,6 +146,7 @@ public class Rummikub {
 
     public static void main(String[] args) {
         HashMap<String, Tile> tiles = setupTiles();
+        ArrayList<ArrayList<String>> sequences = new ArrayList<ArrayList<String>>();
         Scanner scnr = new Scanner(System.in);
 
         // 2nd parameter in setStartPlayer() allows a random player to start
@@ -131,8 +156,10 @@ public class Rummikub {
         
         boolean gameFinished = false;
         while (!gameFinished) {
+            printBoard(sequences);
             printPlayerTiles(tiles, currPlayer);
             
+            // TODO: Invert condition when infinite loop can be resolved.
             if (!emptyRack(tiles, currPlayer)) {
                 gameFinished = true;
             }
