@@ -1,32 +1,70 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Rummikub {
-    public static HashMap<String, Tile> allocateTilesAtStart(HashMap<String, Tile> tiles, int numPlayers) {
-        ArrayList<String> freeTiles = new ArrayList<String>(); // keys only
-        for (String s1 : tiles.keySet()) {
-            freeTiles.add(s1);
-        }
+    // Might need to return 2-4 player's racks
+    public static HashMap<String, ArrayList<Tile>> allocateTilesAtStart(int numPlayers) {
+        HashMap<String, ArrayList<Tile>> tileLists = new HashMap<String, ArrayList<Tile>>();
         
-        for (int i = 0; i < numPlayers; ++i) {
-            for (int j = 0; j < 14; ++j) {
-                String chosenKey = freeTiles.get(getRandom(0, freeTiles.size() - 1));
-                tiles.get(chosenKey).setLocation("P" + (i + 1));
-                freeTiles.remove(chosenKey);
+        ArrayList<Tile> poolTiles = putTilesInPool();
+        ArrayList<Tile> p1Tiles = new ArrayList<Tile>();
+        ArrayList<Tile> p2Tiles = new ArrayList<Tile>();
+        ArrayList<Tile> p3Tiles = new ArrayList<Tile>();
+        ArrayList<Tile> p4Tiles = new ArrayList<Tile>();
+
+        // Allocate 14 random tiles to each player.
+        for (int i = 0; i < 14 * numPlayers; ++i) {
+            Tile t1 = poolTiles.get(getRandom(0, poolTiles.size() - 1));
+            
+            switch(i / 14) {
+                case 0:
+                    p1Tiles.add(t1);
+                    t1.addLocation("Player 1");
+                    break;
+                case 1:
+                    p2Tiles.add(t1);
+                    t1.addLocation("Player 2");
+                    break;
+                case 2:
+                    p3Tiles.add(t1);
+                    t1.addLocation("Player 3");
+                    break;
+                case 3:
+                    p4Tiles.add(t1);
+                    t1.addLocation("Player 4");
+                    break;
+                default:
+                    break;
             }
+
+            poolTiles.remove(t1);
         }
-        
-        return tiles;
+
+        // Only return the non-empty lists (always includes the 1st 3 lists).
+        tileLists.put("Pool tiles", poolTiles);
+        if (p1Tiles.size() != 0) { tileLists.put("Player 1 tiles", p1Tiles); };
+        if (p2Tiles.size() != 0) { tileLists.put("Player 2 tiles", p2Tiles); };
+        if (p3Tiles.size() != 0) { tileLists.put("Player 3 tiles", p3Tiles); };
+        if (p4Tiles.size() != 0) { tileLists.put("Player 4 tiles", p4Tiles); };
+
+        return tileLists;
     }
 
-    public static boolean emptyRack (HashMap<String, Tile> tiles, int currPlayer) {
-        for (Tile t1 : tiles.values()) {
-            if (t1.getLocation().equals("P" + currPlayer)) { return false; }
+    public static boolean emptyRack(HashMap<String, ArrayList<Tile>> tiles, int currPlayer) {
+        // The keys are (Pool | Player 1-4) tiles
+        switch(currPlayer){
+            case 1:
+                return tiles.get("Player 1 tiles").size() == 0;
+            case 2:
+                return tiles.get("Player 2 tiles").size() == 0;
+            case 3:
+                return tiles.get("Player 3 tiles").size() == 0;
+            case 4:
+                return tiles.get("Player 4 tiles").size() == 0;
+            default: // Assume that some invalid player number has no rack
+                return false;
         }
-
-        return true;
     }
     
     // Used for selecting both the starting player and tiles from pool
@@ -59,37 +97,63 @@ public class Rummikub {
         }
 
         // Simple way of checking the size. Obviously requires pre-loop initalisation
-        if (i == 0) {
-            System.out.println("Board is empty");
-        }
+        if (i == 0) { System.out.println("Board is empty"); }
     }
 
-    public static void printPlayerTiles (HashMap<String, Tile> tiles, int currPlayer) {
-        ArrayList<String> freeTiles = new ArrayList<String>(); // keys only
-        System.out.println();
+    public static void printPlayerTiles (HashMap<String, ArrayList<Tile>> tiles, int currPlayer) {        
+        // The keys are (Pool | Player 1-4) tiles
+        ArrayList<Tile> currTiles = new ArrayList<Tile>();
         
-        // Get both keys and values in one shot
-        for (Map.Entry<String, Tile> entry : tiles.entrySet()) {
-            String key = entry.getKey();
-            Tile value = entry.getValue();
+        switch(currPlayer){
+            case 1:
+                currTiles = tiles.get("Player 1 tiles");
+                break;
+            case 2:
+                currTiles = tiles.get("Player 2 tiles");
+                break;
+            case 3:
+                currTiles = tiles.get("Player 3 tiles");
+                break;
+            case 4:
+                currTiles = tiles.get("Player 4 tiles");
+                break;
+            default: // Assume that some invalid player number has no rack
+                currTiles.sort(null);
+                break;
+        }
+        
+        // TODO: Sort by colour (numbers are not yet touched).
+        // currTiles.sort(null);
 
-            if (value.getLocation().equals("P" + currPlayer)) {
-                freeTiles.add(key);
+        System.out.println("\nPlayer " + currPlayer + " has the following tiles:");
+        for (int i = 0; i < currTiles.size(); ++i) {
+            System.out.print(currTiles.get(i) + (i < currTiles.size() - 1 ? ", " : ""));
+        }
+        System.out.println();
+    }
+
+    public static ArrayList<Tile> putTilesInPool() {
+        ArrayList<Tile> poolTiles = new ArrayList<Tile>();
+        final String[] COLOURS = {"Blue", "Orange", "Black", "Red"};
+
+        // Add non-jokers
+        for (int i = 1; i <= 13; ++i) {
+            for (String c1 : COLOURS) {
+                for (int j = 0; j < 2; ++j) {
+                    poolTiles.add(new Tile(c1, "Non-joker", i));
+                    poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
+                }
             }
         }
 
-        // Sort by colour (numbers are not yet touched).
-        freeTiles.sort(null);
+        // Add jokers
+        poolTiles.add(new Tile("Black", "Joker"));
+        poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
 
-        System.out.println("Player " + currPlayer + " has the following tiles: ");
-        for (String s1 : freeTiles) {
-            /*
-             * Tile names with jokers should be printed out in full. Those with numbers
-             * should be printed out without the a or b at the end.
-             */
-            String tileNoID = s1.substring(0, s1.length() - 1);
-            System.out.println(s1.indexOf("joker") == -1 ? tileNoID : s1);
-        }
+        poolTiles.add(new Tile("Red", "Joker"));
+        poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
+        
+        return poolTiles;
     }
 
     public static int setNumPlayers(Scanner scnr) {
@@ -122,45 +186,25 @@ public class Rummikub {
         
         return startPlayer;
     }
-    
-    public static HashMap<String, Tile> setupTiles() {
-        HashMap<String, Tile> tiles = new HashMap<String, Tile>();
-
-        final String[] COLOURS = {"Blue", "Orange", "Red", "Black"};
-        final String[] IDENTIFIERS = {"a", "b"};
-
-        for (String s1: COLOURS) {
-            for (int i = 1; i <= 13; i++) {
-                for (String s2 : IDENTIFIERS) {
-                    Tile t1 = new Tile(s1, "non-joker", i, s2);
-                    tiles.put(s1 + " " + i + s2, t1);
-                }
-            }
-        }
-
-        tiles.put("Black joker", new Tile("black", "joker"));
-        tiles.put("Red joker", new Tile("red", "joker"));
-
-        return tiles;
-    }
 
     public static void main(String[] args) {
-        HashMap<String, Tile> tiles = setupTiles();
         ArrayList<ArrayList<String>> sequences = new ArrayList<ArrayList<String>>();
         Scanner scnr = new Scanner(System.in);
 
         // 2nd parameter in setStartPlayer() allows a random player to start
         int numPlayers = setNumPlayers(scnr);
         int currPlayer = setStartPlayer(scnr, numPlayers); // Initialised then cycles through.
-        tiles = allocateTilesAtStart(tiles, numPlayers);
+        
+        // The keys are (Pool | Player 1-4) tiles
+        HashMap<String, ArrayList<Tile>> tileLists = allocateTilesAtStart(numPlayers);
         
         boolean gameFinished = false;
         while (!gameFinished) {
             printBoard(sequences);
-            printPlayerTiles(tiles, currPlayer);
+            printPlayerTiles(tileLists, currPlayer);
             
             // TODO: Invert condition when infinite loop can be resolved.
-            if (!emptyRack(tiles, currPlayer)) {
+            if (!emptyRack(tileLists, currPlayer)) {
                 gameFinished = true;
             }
             else {
@@ -169,6 +213,6 @@ public class Rummikub {
             }
         }
 
-        System.out.println("Player " + currPlayer + " won!");
+        System.out.println("\nPlayer " + currPlayer + " won!");
     }
 }

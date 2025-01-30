@@ -1,19 +1,31 @@
+import java.util.ArrayList;
+
 public class Tile {
     private String colour, type;
     private int number; // Non-jokers only
-    private String numberID; // Each colour-number combination has 2 tiles
-    private String location = "Pool"; // Pool, P(1-4) or Play
+    private ArrayList<String> location = new ArrayList<String>(); // Store where the tile has been
+    private int lastMoveIndex = 0; // Store the index of where the tile was as of the last move.
     
     public Tile (String colour, String type) {// Jokers only
         this.colour = colour; // Red or black
-        this.type = type; // The value will be "joker"
+        this.type = type; // The value will be "Joker"
     }
 
-    public Tile (String colour, String type, int number, String numberID) {// Non-jokers only
+    public Tile (String colour, String type, int number) {// Non-jokers only
         this.colour = colour; // Blue, orange, red or black
-        this.type = type; // The value will be "non-joker"
+        this.type = type; // The value will be "Non-joker"
         this.number = number; // Possible values are in the range [1, 13]
-        this.numberID = numberID; // Either "a" or "b"
+    }
+
+    public String toString() {
+        switch(type) {
+            case "Non-joker":
+                return colour + " " + number;
+            case "Joker":
+                return colour + " " + type;
+            default:
+                return "";
+        }
     }
 
     public void setColour(String colour) { this.colour = colour; }
@@ -25,9 +37,9 @@ public class Tile {
     public void setNumber(int number) { this.number = number; }
     public int getNumber() { return number; }
     
-    public void setNumberID(String numberID) { this.numberID = numberID; }
-    public String getNumberID() { return numberID; }
-    
-    public void setLocation(String location) { this.location = location; }
-    public String getLocation() { return location; }
+    public void addLocation(String newLocation) { location.add(newLocation); }
+    public ArrayList<String> getLocation() { return location; }
+
+    public void setLastMoveIndex(int lastMoveIndex) { this.lastMoveIndex = lastMoveIndex; }
+    public int getLastMoveIndex() { return lastMoveIndex; }
 }
