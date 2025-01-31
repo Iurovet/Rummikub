@@ -79,21 +79,22 @@ public class Rummikub {
         return (int)(Math.random() * (max - min + 1)) + min;
     }
 
-    public static void printBoard (ArrayList<ArrayList<String>> sequences) {
+    public static void printBoard (ArrayList<ArrayList<Tile>> sequences) {
         System.out.println();
         
         int i = 0;
-        for (i = 0; i < sequences.size(); ++i) {
+        for (i = 0; i < sequences.size(); ++i) {           
             System.out.print("Sequence " + (i + 1) + ": <");
          
-            for (int j = 0; j < sequences.get(i).size(); ++i) {
-                System.out.print(sequences.get(i));
+            for (int j = 0; j < sequences.get(i).size(); j++) {
+                System.out.print(sequences.get(i).get(j).toString());
                 if (j < sequences.get(i).size() - 1) {
                     System.out.print(", ");
                 }
+                else {
+                    System.out.println(">\n");
+                }
             }
-            
-            System.out.println(">\n");
         }
 
         // Simple way of checking the size. Obviously requires pre-loop initalisation
@@ -188,14 +189,16 @@ public class Rummikub {
     }
 
     public static void main(String[] args) {
-        ArrayList<ArrayList<String>> sequences = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<Tile>> sequences = new ArrayList<ArrayList<Tile>>();
         Scanner scnr = new Scanner(System.in);
 
         // 2nd parameter in setStartPlayer() allows a random player to start
         int numPlayers = setNumPlayers(scnr);
         int currPlayer = setStartPlayer(scnr, numPlayers); // Initialised then cycles through.
         
-        // The keys are (Pool | Player 1-4) tiles
+        /* The keys are (Pool | Player 1-4) tiles. Cannot include the sequences list as it is
+         * 2D (must be able to store which seqeuence a tile belongs to)
+         */
         HashMap<String, ArrayList<Tile>> tileLists = allocateTilesAtStart(numPlayers);
         
         boolean gameFinished = false;
