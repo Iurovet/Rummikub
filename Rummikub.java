@@ -253,7 +253,7 @@ public class Rummikub {
             }
             else {
                 // Increment player number (or set to 1 if maxed out)
-                // currPlayer = (currPlayer < numPlayers) ? currPlayer + 1 : 1;
+                currPlayer = (currPlayer < numPlayers) ? currPlayer + 1 : 1;
             }
         }
 
