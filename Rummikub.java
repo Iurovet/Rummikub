@@ -133,6 +133,11 @@ public class Rummikub {
         System.out.println();
     }
 
+    public static void printUserCommands() {
+        System.out.println("\nChoose from one of the following commands (case insensitive):");
+        System.out.println("Pool: Grab 1 tile from the pool (forfeits turn)\n");
+    }
+
     public static ArrayList<Tile> putTilesInPool() {
         ArrayList<Tile> poolTiles = new ArrayList<Tile>();
         final String[] COLOURS = {"Blue", "Orange", "Black", "Red"};
@@ -160,16 +165,20 @@ public class Rummikub {
     public static int setNumPlayers(Scanner scnr) {
         System.out.println("Welcome to Rummikub. Select between 2-4 players");
         int numPlayers = scnr.nextInt();
+        scnr.nextLine(); // Escape to the next line, see main for more details.
+        
         while ((numPlayers < 2) || (numPlayers > 4)) {
             System.out.println("Error: Must select between 2-4 players");
             numPlayers = scnr.nextInt();
         }
+
         return numPlayers;
     }
 
     public static int setStartPlayer(Scanner scnr, int numPlayers) {
         System.out.println("Choose a starting player (or 5 for random)");
         int startPlayer = scnr.nextInt();
+        scnr.nextLine(); // Escape to the next line, see main for more details.
         
         /*
          * Accepted values are in range [1, numPlayers] and 5. Cannot simply check for
@@ -178,6 +187,7 @@ public class Rummikub {
         while ((startPlayer < 1) || ((startPlayer > numPlayers) && (startPlayer != 5))) {
             System.out.println("Error: Must select a valid number (or 5 for random)");
             startPlayer = scnr.nextInt();
+            scnr.nextLine(); // Escape to the next line, see main for more details.
         }
 
         if (startPlayer == 5) {// Inform of starting player, if randomly selected
@@ -205,9 +215,29 @@ public class Rummikub {
         while (!gameFinished) {
             printBoard(sequences);
             printPlayerTiles(tileLists, currPlayer);
-            
-            // TODO: Invert condition when infinite loop can be resolved.
-            if (!emptyRack(tileLists, currPlayer)) {
+
+            while (true) {
+                boolean validInput = true;
+                printUserCommands();
+
+                /* Next user input after 2 nextInt()'s, so they must be escaped
+                 * using nextLine() straight after.
+                 */
+                String userInput = scnr.nextLine();
+                
+                switch(userInput.toUpperCase()){
+                    case "POOL": 
+                        break;
+                    default:
+                        validInput = false;
+                        System.out.println("Error: Command unrecognised");
+                        break;
+                }
+
+                if (validInput) { break; }
+            }
+
+            if (emptyRack(tileLists, currPlayer)) {
                 gameFinished = true;
             }
             else {
