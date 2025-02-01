@@ -142,17 +142,17 @@ public class Rummikub {
         for (int i = 1; i <= 13; ++i) {
             for (String c1 : COLOURS) {
                 for (int j = 0; j < 2; ++j) {
-                    poolTiles.add(new Tile(c1, "Non-joker", i));
+                    poolTiles.add(new Tile(c1, i));
                     poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
                 }
             }
         }
 
         // Add jokers
-        poolTiles.add(new Tile("Black", "Joker"));
+        poolTiles.add(new Tile("Black"));
         poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
 
-        poolTiles.add(new Tile("Red", "Joker"));
+        poolTiles.add(new Tile("Red"));
         poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
         
         return poolTiles;
@@ -253,7 +253,7 @@ public class Rummikub {
             }
             else {
                 // Increment player number (or set to 1 if maxed out)
-                currPlayer = (currPlayer < numPlayers) ? currPlayer + 1 : 1;
+                // currPlayer = (currPlayer < numPlayers) ? currPlayer + 1 : 1;
             }
         }
 

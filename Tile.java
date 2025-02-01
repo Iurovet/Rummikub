@@ -1,39 +1,33 @@
 import java.util.ArrayList;
 
 public class Tile {
-    private String colour, type;
+    private String colour;
     private int number; // Non-jokers only
     private ArrayList<String> location = new ArrayList<String>(); // Store where the tile has been (player number does not matter)
     private int lastMoveIndex = 0; // Store the index of where the tile was as of the last move.
     
-    public Tile (String colour, String type) {// Jokers only
+    public Tile (String colour) {// Jokers only
         this.colour = colour; // Red or black
-        this.type = type; // The value will be "Joker"
+        this.number = 0;
     }
 
-    public Tile (String colour, String type, int number) {// Non-jokers only
+    public Tile (String colour, int number) {// Non-jokers only
         this.colour = colour; // Blue, orange, red or black
-        this.type = type; // The value will be "Non-joker"
         this.number = number; // Possible values are in the range [1, 13]
     }
 
     public String toString() {
-        switch(type) {
-            case "Non-joker":
-                return colour + " " + number;
-            case "Joker":
-                return colour + " " + type;
+        switch(number) {
+            case 0:
+                return colour + " joker";
             default:
-                return "";
+                return colour + " " + number;
         }
     }
 
     public void setColour(String colour) { this.colour = colour; }
     public String getColour() { return colour; }
     
-    public void setType(String type) { this.type = type; }
-    public String getType() { return type; }
-
     public void setNumber(int number) { this.number = number; }
     public int getNumber() { return number; }
     
