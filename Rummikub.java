@@ -20,24 +20,21 @@ public class Rummikub {
             switch(i / 14) {
                 case 0:
                     p1Tiles.add(t1);
-                    t1.addLocation("Player 1");
                     break;
                 case 1:
                     p2Tiles.add(t1);
-                    t1.addLocation("Player 2");
                     break;
                 case 2:
                     p3Tiles.add(t1);
-                    t1.addLocation("Player 3");
                     break;
                 case 3:
                     p4Tiles.add(t1);
-                    t1.addLocation("Player 4");
                     break;
                 default:
                     break;
             }
 
+            t1.addLocation("Player");
             poolTiles.remove(t1);
         }
 
@@ -169,7 +166,7 @@ public class Rummikub {
         Tile t1 = tileLists.get("Pool tiles").get(getRandom(0, tileLists.get("Pool tiles").size() - 1));
         
         tileLists.get("Player " + currPlayer + " tiles").add(t1);
-        t1.addLocation("Player " + currPlayer);
+        t1.addLocation("Player");
         tileLists.get("Pool tiles").remove(t1);
         
         return tileLists;

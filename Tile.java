@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Tile {
     private String colour, type;
     private int number; // Non-jokers only
-    private ArrayList<String> location = new ArrayList<String>(); // Store where the tile has been
+    private ArrayList<String> location = new ArrayList<String>(); // Store where the tile has been (player number does not matter)
     private int lastMoveIndex = 0; // Store the index of where the tile was as of the last move.
     
     public Tile (String colour, String type) {// Jokers only
