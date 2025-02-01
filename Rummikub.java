@@ -119,7 +119,6 @@ public class Rummikub {
                 currTiles = tiles.get("Player 4 tiles");
                 break;
             default: // Assume that some invalid player number has no rack
-                currTiles.sort(null);
                 break;
         }
         
@@ -160,6 +159,20 @@ public class Rummikub {
         poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
         
         return poolTiles;
+    }
+
+    public static HashMap<String, ArrayList<Tile>> randomPoolTile(HashMap<String, ArrayList<Tile>> tileLists, int currPlayer) {
+        if (tileLists.get("Pool tiles").size() == 0) {
+            System.out.println("Sorry, no more tiles left. Your move has still been forfeited");
+        }
+        
+        Tile t1 = tileLists.get("Pool tiles").get(getRandom(0, tileLists.get("Pool tiles").size() - 1));
+        
+        tileLists.get("Player " + currPlayer + " tiles").add(t1);
+        t1.addLocation("Player " + currPlayer);
+        tileLists.get("Pool tiles").remove(t1);
+        
+        return tileLists;
     }
 
     public static int setNumPlayers(Scanner scnr) {
@@ -226,7 +239,8 @@ public class Rummikub {
                 String userInput = scnr.nextLine();
                 
                 switch(userInput.toUpperCase()){
-                    case "POOL": 
+                    case "POOL":
+                        tileLists = randomPoolTile(tileLists, currPlayer);
                         break;
                     default:
                         validInput = false;
