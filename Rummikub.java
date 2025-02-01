@@ -225,9 +225,11 @@ public class Rummikub {
         while (!gameFinished) {
             printBoard(sequences);
             printPlayerTiles(tileLists, currPlayer);
+            boolean validInput = false;
 
-            while (true) {
-                boolean validInput = true;
+            while (!validInput) {
+                // Declare false once rather than declare true multiple times
+                validInput = true;
                 printUserCommands();
 
                 /* Next user input after 2 nextInt()'s, so they must be escaped
@@ -244,8 +246,6 @@ public class Rummikub {
                         System.out.println("Error: Command unrecognised");
                         break;
                 }
-
-                if (validInput) { break; }
             }
 
             if (emptyRack(tileLists, currPlayer)) {
