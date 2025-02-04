@@ -34,7 +34,6 @@ public class Rummikub {
                     break;
             }
 
-            t1.addLocation("Player");
             poolTiles.remove(t1);
         }
 
@@ -143,18 +142,14 @@ public class Rummikub {
             for (String c1 : COLOURS) {
                 for (int j = 0; j < 2; ++j) {
                     poolTiles.add(new Tile(c1, i));
-                    poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
                 }
             }
         }
 
         // Add jokers
         poolTiles.add(new Tile("Black"));
-        poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
-
         poolTiles.add(new Tile("Red"));
-        poolTiles.get(poolTiles.size() - 1).addLocation("Pool");
-        
+       
         return poolTiles;
     }
 
@@ -166,7 +161,6 @@ public class Rummikub {
         Tile t1 = tileLists.get("Pool tiles").get(getRandom(0, tileLists.get("Pool tiles").size() - 1));
         
         tileLists.get("Player " + currPlayer + " tiles").add(t1);
-        t1.addLocation("Player");
         tileLists.get("Pool tiles").remove(t1);
         
         return tileLists;

@@ -1,13 +1,9 @@
-import java.util.ArrayList;
-
 public class Tile {
     private String colour;
-    private int number; // Non-jokers only
-    private ArrayList<String> location = new ArrayList<String>(); // Store where the tile has been (player number does not matter)
-    private int lastMoveIndex = 0; // Store the index of where the tile was as of the last move.
+    private int number; // 0 = joker, 1-13 = non-joker
     
     public Tile (String colour) {// Jokers only
-        this.colour = colour; // Red or black
+        this.colour = colour; // Red or black (no effect on other tile colours)
         this.number = 0;
     }
 
@@ -30,10 +26,4 @@ public class Tile {
     
     public void setNumber(int number) { this.number = number; }
     public int getNumber() { return number; }
-    
-    public void addLocation(String newLocation) { location.add(newLocation); }
-    public ArrayList<String> getLocation() { return location; }
-
-    public void setLastMoveIndex(int lastMoveIndex) { this.lastMoveIndex = lastMoveIndex; }
-    public int getLastMoveIndex() { return lastMoveIndex; }
 }
