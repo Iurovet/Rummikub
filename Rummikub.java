@@ -236,7 +236,7 @@ public class Rummikub {
                     System.out.print(", ");
                 }
                 else {
-                    System.out.println(">\n");
+                    System.out.println(">");
                 }
             }
         }
