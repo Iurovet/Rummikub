@@ -276,13 +276,20 @@ public class Rummikub {
         System.out.println();
     }
 
-    public static void printUserCommands(int numSequences) {
+    public static void printUserCommands(int numPoolTiles, int numSequences) {
         System.out.println("\nChoose from one of the following commands (case insensitive):");
-        System.out.println("Pool: Grab 1 tile from the pool (forfeits turn)");
-        if (numSequences > 0) {
-            System.out.print("Split: Split a chosen sequence at the specified turn.");
-            System.out.println("Note: Currently assumes there will be no gaps left in the middle\n");
+        
+        if (numPoolTiles > 0) {
+            System.out.println("Pool: Grab 1 tile from the pool (forfeits turn)");
         }
+        
+        if (numSequences > 0) {
+            System.out.print("Split: Split a chosen sequence at the specified turn. ");
+            System.out.println("Note: Currently assumes there will be no gaps left in the middle");
+        }
+
+        // Extra blank line that need not be moved around as a result of building this method.
+        System.out.println();
     }
 
     public static ArrayList<Tile> putTilesInPool() {
@@ -321,7 +328,6 @@ public class Rummikub {
     public static int setNumPlayers(Scanner scnr) {
         System.out.println("Welcome to Rummikub. Select between 2-4 players");
         int numPlayers = scnr.nextInt();
-        scnr.nextLine(); // Escape to the next line, see main for more details.
         
         while ((numPlayers < 2) || (numPlayers > 4)) {
             System.out.println("Error: Must select between 2-4 players");
@@ -334,7 +340,9 @@ public class Rummikub {
     public static int setStartPlayer(Scanner scnr, int numPlayers) {
         System.out.println("Choose a starting player (or 5 for random)");
         int startPlayer = scnr.nextInt();
-        scnr.nextLine(); // Escape to the next line, see main for more details.
+        
+        // Escape to the next line, as this will be used once again for the next user input.
+        scnr.nextLine();
         
         /*
          * Accepted values are in range [1, numPlayers] and 5. Cannot simply check for
@@ -444,33 +452,41 @@ public class Rummikub {
         while (!gameFinished) {
             printBoard(sequences);
             printPlayerTiles(tileLists, currPlayer);
+            printUserCommands(tileLists.get("Pool tiles").size(), sequences.size());
+            
             boolean validInput = false;
-
             while (!validInput) {
-                // Declare false once rather than declare true multiple times
-                validInput = true;
-                printUserCommands(sequences.size());
-
-                /* The previous user input was nextInt(). nextLine() must be placed
-                 * directly after it so that this instance of the same code works properly.
+                /* Declare false once rather than declare true multiple times.
+                 * Note that this represents whether the command is recognised,
+                 * as well as if it could be executed given the current game state.
+                 * Printing the game state and/or user commands would be too much
+                 * directly following invalid input.
                  */
+                validInput = true;
+
                 String userInput = scnr.nextLine();
-                
-                switch(userInput.toUpperCase()){
+                switch (userInput.toUpperCase()){
                     // case "ADD":
-                    case "SPLIT":
+                    case "SPLIT": // Should only appear where upon execution, the if-statement would be true.
                         if (sequences.size() > 0) {
                             sequences = splitSequence(sequences, scnr);
-                            break;
                         }
                         else {
                             validInput = false;
-                            System.out.println("Error: Command unrecognised");
-                            break;
+                            System.out.println("Error: No sequences to split.");
                         }
+
+                        break;
                     // case "SWAP":
-                    case "POOL":
-                        tileLists = randomPoolTile(tileLists, currPlayer);
+                    case "POOL": // Should only appear where upon execution, the if-statement would be true.
+                        if (tileLists.get("Pool tiles").size() > 0) {
+                            tileLists = randomPoolTile(tileLists, currPlayer);
+                        }
+                        else {
+                            validInput = false;
+                            System.out.println("Error: No tiles left in the pool.");
+                        }
+                        
                         break;
                     default:
                         validInput = false;
