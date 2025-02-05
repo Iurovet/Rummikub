@@ -363,6 +363,14 @@ public class Rummikub {
          */
         HashMap<String, ArrayList<Tile>> tileLists = allocateTilesAtStart(numPlayers);
         
+        /* Each player must put down 30 or more points worth of their
+         * own tiles (without touching any other tiles).
+         */
+        HashMap<String, Boolean> firstMoves = new HashMap<String, Boolean>();
+        for (int i = 1; i <= numPlayers; ++i) {
+            firstMoves.put("Player " + i, false);
+        }
+
         boolean gameFinished = false;
         while (!gameFinished) {
             printBoard(sequences);
