@@ -279,13 +279,16 @@ public class Rummikub {
     public static void printUserCommands(int numPoolTiles, int numSequences) {
         System.out.println("\nChoose from one of the following commands (case insensitive):");
         
-        if (numPoolTiles > 0) {
-            System.out.println("Pool: Grab 1 tile from the pool (forfeits turn)");
-        }
+        System.out.println("Abort: Revert game state back to the last move");
+        System.out.println("Finish: Finish current move and save current game state.");
         
         if (numSequences > 0) {
             System.out.print("Split: Split a chosen sequence at the specified turn. ");
             System.out.println("Note: Currently assumes there will be no gaps left in the middle");
+        }
+        
+        if (numPoolTiles > 0) {
+            System.out.println("Pool: Grab 1 tile from the pool (forfeits turn)");
         }
 
         // Extra blank line that need not be moved around as a result of building this method.
@@ -448,6 +451,8 @@ public class Rummikub {
             firstMoves.put("Player " + i, false);
         }
 
+        sequences.add(tileLists.get("Player 1 tiles"));
+
         boolean gameFinished = false;
         while (!gameFinished) {
             printBoard(sequences);
@@ -464,9 +469,29 @@ public class Rummikub {
                  */
                 validInput = true;
 
+                // Store the game state as of the most recent move in case of desire to abort move.
+                final ArrayList<ArrayList<Tile>> SEQUENCES_LAST_VERSION = sequences;
+                final HashMap<String, ArrayList<Tile>> TILELISTS_LAST_VERSION = tileLists;
+
                 String userInput = scnr.nextLine();
                 switch (userInput.toUpperCase()){
                     // case "ADD":
+                    case "ABORT": // Revert game state to original state.
+                        sequences = SEQUENCES_LAST_VERSION;
+                        tileLists = TILELISTS_LAST_VERSION;
+
+                        System.out.println("Move successfully aborted.");
+                        break;
+                    case "FINISH": // Finish current move. The inner while-loop will 
+                        if (checkBoardValidity(sequences)) {
+                            System.out.println("Move successfully finished.");
+                        }
+                        else {
+                            validInput = false;
+                            System.out.println("Please fix any mistakes and try again");
+                        }
+
+                        break;
                     case "SPLIT": // Should only appear where upon execution, the if-statement would be true.
                         if (sequences.size() > 0) {
                             sequences = splitSequence(sequences, scnr);
@@ -477,7 +502,6 @@ public class Rummikub {
                         }
 
                         break;
-                    // case "SWAP":
                     case "POOL": // Should only appear where upon execution, the if-statement would be true.
                         if (tileLists.get("Pool tiles").size() > 0) {
                             tileLists = randomPoolTile(tileLists, currPlayer);
@@ -488,6 +512,7 @@ public class Rummikub {
                         }
                         
                         break;
+                    // case "SWAP":
                     default:
                         validInput = false;
                         System.out.println("Error: Command unrecognised");
