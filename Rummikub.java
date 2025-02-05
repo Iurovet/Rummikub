@@ -276,9 +276,13 @@ public class Rummikub {
         System.out.println();
     }
 
-    public static void printUserCommands() {
+    public static void printUserCommands(int numSequences) {
         System.out.println("\nChoose from one of the following commands (case insensitive):");
-        System.out.println("Pool: Grab 1 tile from the pool (forfeits turn)\n");
+        System.out.println("Pool: Grab 1 tile from the pool (forfeits turn)");
+        if (numSequences > 0) {
+            System.out.print("Split: Split a chosen sequence at the specified turn.");
+            System.out.println("Note: Currently assumes there will be no gaps left in the middle\n");
+        }
     }
 
     public static ArrayList<Tile> putTilesInPool() {
@@ -350,6 +354,71 @@ public class Rummikub {
         return startPlayer;
     }
 
+    // Currently assumes that the sequence will be split so as to not leave empty spaces
+    public static ArrayList<ArrayList<Tile>> splitSequence(ArrayList<ArrayList<Tile>> sequences, Scanner scnr) {
+        boolean validInput = false;
+        int sequenceNumber = 0;
+        int splittingPosition = 0;
+
+        while (!validInput) {
+            // Declare false once rather than declare true multiple times
+            validInput = true;
+        
+            // Defined as the first number to go into the new array
+            System.out.println("\nEnter the sequence number followed by the number of the 1st element to be moved");
+            sequenceNumber = scnr.nextInt();
+            splittingPosition = scnr.nextInt();
+            
+            // Indices are [1, n] in human readable format, stored as [0, n)
+            if ((sequenceNumber < 1) || (sequenceNumber > sequences.size())) {
+                System.out.println("Error: Sequence number not found");
+                validInput = false;
+                
+                /* Not only would splittingPosition not have a valid value for
+                 * a non-existent sequence, continuing with the iteration would
+                 * also cause an out of bounds exception
+                 */
+                continue;
+            }
+
+            if (splittingPosition < 1) {
+                System.out.println("Error: Cannot split at a non-positive position");
+                validInput = false;
+            }
+            else if (splittingPosition == 1) {
+                System.out.println("Error: Cannot split an entire sequence");
+                validInput = false;
+            }
+            else if (splittingPosition > sequences.get(sequenceNumber - 1).size()) {
+                System.out.println("Error: Sequence " + (sequenceNumber - 1) + " contains fewer than " + splittingPosition + " numbers");
+                validInput = false;
+            }
+        }
+
+        /* Copy the tiles to a new ArrayList, then put it after the original sequence
+         * (everything gets shifted by 1). The sequence number must be decremented
+         * to convert from [1, n] to [0, n) style, then incremented so that the new
+         * sequence comes directly after. However, doing so in the loop will affect
+         * the results prematurely.
+         */
+        sequenceNumber--;
+        splittingPosition--;
+        
+        /* Do things in reverse order to avoid messing up the indices and double loops.
+         * Instead of adding at the next available index, must add at the beginning to
+         * preserve order. Anything pre-existing will be shifted by 1.
+         */
+        ArrayList<Tile> newSequence = new ArrayList<Tile>();
+        for (int i = sequences.get(sequenceNumber).size() - 1; i >= splittingPosition; --i) {
+            newSequence.add(0, sequences.get(sequenceNumber).get(i));
+            sequences.get(sequenceNumber).remove(i);
+        }
+        sequences.add(++sequenceNumber, newSequence);
+        
+        scnr.nextLine(); // Escape in preparation for the next command
+        return sequences;
+    }
+
     public static void main(String[] args) {
         ArrayList<ArrayList<Tile>> sequences = new ArrayList<ArrayList<Tile>>();
         Scanner scnr = new Scanner(System.in);
@@ -380,14 +449,26 @@ public class Rummikub {
             while (!validInput) {
                 // Declare false once rather than declare true multiple times
                 validInput = true;
-                printUserCommands();
+                printUserCommands(sequences.size());
 
-                /* Next user input after 2 nextInt()'s, so they must be escaped
-                 * using nextLine() straight after.
+                /* The previous user input was nextInt(). nextLine() must be placed
+                 * directly after it so that this instance of the same code works properly.
                  */
                 String userInput = scnr.nextLine();
                 
                 switch(userInput.toUpperCase()){
+                    // case "ADD":
+                    case "SPLIT":
+                        if (sequences.size() > 0) {
+                            sequences = splitSequence(sequences, scnr);
+                            break;
+                        }
+                        else {
+                            validInput = false;
+                            System.out.println("Error: Command unrecognised");
+                            break;
+                        }
+                    // case "SWAP":
                     case "POOL":
                         tileLists = randomPoolTile(tileLists, currPlayer);
                         break;
