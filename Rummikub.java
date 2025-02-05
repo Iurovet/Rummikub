@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -49,49 +48,24 @@ public class Rummikub {
     }
 
     public static boolean checkBoardLength(ArrayList<ArrayList<Tile>> sequences) {
-        int numFalse = 0;
-        
         for (int i = 0; i < sequences.size(); ++i) {
             if (sequences.get(i).size() < 3) {
                 System.out.println("Sequence " + (i + 1) + " is not long enough");
-                numFalse++;
+                return false;
             }
         }
 
-        return numFalse == 0;
-    }
-
-    public static boolean checkBoardJokers(ArrayList<ArrayList<Tile>> sequences) {
-        int numFalse = 0;
-        
-        for (int i = 0; i < sequences.size(); ++i) {
-            ArrayList<Tile> currSequence = sequences.get(i);
-            for (int j = 0; j < currSequence.size() - 1; ++j) {
-                if ((currSequence.get(j).getNumber() == 0) && (currSequence.get(j + 1).getNumber() == 1)) {
-                    System.out.println("Sequence " + (i + 1) + " contains a joker before 1 (positions" + j + " and " + (j + 1) + ").");
-                }
-                
-                numFalse++;
-            }
-
-            for (int j = 1; j < currSequence.size(); ++j) {
-                if ((currSequence.get(j).getNumber() == 13) && (currSequence.get(j + 1).getNumber() == 0)) {
-                    System.out.println("Sequence " + (i + 1) + " contains a joker after 13 (positions" + j + " and " + (j + 1) + ").");
-                }
-
-                numFalse++;
-            }
-        }
-
-        return numFalse == 0;
+        return true;
     }
 
     public static boolean checkBoardSequences(ArrayList<ArrayList<Tile>> sequences) {
-        /* Groups and runs take inner indices 0 and 1, respectively (initialise to -1 for no errors found).
-         * Note that only the 1st group- and run-related errors are captured for simplicity.
+        /* Only the 1st group- and run-related errors are captured for simplicity.
+         * Also, each element must be specifically initialised as an object.
          */
-        int[][] groupRunErrors = new int[sequences.size()][2];
-        for (int[] row: groupRunErrors) { Arrays.fill(row, -1); }
+        ErrorMessage[] groupRunErrors = new ErrorMessage[sequences.size()];
+        for (int i = 0; i < groupRunErrors.length; ++i) {
+            groupRunErrors[i] = new ErrorMessage();
+        }
         
         // Groups
         for (int i = 0; i < sequences.size(); ++i) {
@@ -102,14 +76,14 @@ public class Rummikub {
                 usedColours.add(currSequence.get(j).getColour());
 
                 if (j == 4) { // Group length cannot exceed 4 (incl. jokers)
-                    groupRunErrors[i][0] = 4;
+                    groupRunErrors[i].setGroupError("Cannot have a group of 5 or more tiles");
                     break;
                 }
     
                 // Colours must not be used more than once, bar jokers.
                 if ((usedColours.contains(currSequence.get(j).getColour())) &&
                     (currSequence.get(j).getNumber() != 0)) {
-                    groupRunErrors[i][0] = j;
+                    groupRunErrors[i].setGroupError("Cannot have 2 non-jokers of the same colour per group");
                     break;
                 }
 
@@ -117,7 +91,7 @@ public class Rummikub {
                 if (j <= currSequence.size() - 1) { // Check for out of bounds access
                     if ((currSequence.get(j).getNumber() != currSequence.get(j + 1).getNumber()) &&
                         ((currSequence.get(j).getNumber() != 0) || (currSequence.get(j + 1).getNumber() != 0))) {
-                        groupRunErrors[i][0] = j + 1;
+                        groupRunErrors[i].setGroupError("Cannot have 2 non-jokers with different numbers per group");
                         break;
                     }
                 }
@@ -127,34 +101,49 @@ public class Rummikub {
         // Runs
         for (int i = 0; i < sequences.size(); ++i) {
             ArrayList<Tile> currSequence = sequences.get(i);
-            for (int j = 0; j < currSequence.size() - 1; ++j) {
-                switch (currSequence.get(j).getNumber()) {
-                    case 0: // Jokers
-                        /* If the current tile is a joker, then the numbers on either side must differ by 2
-                         * and share the same colour, though this makes no difference for an edge tile.
-                         * Having said that, checking edge tiles would lead to an out of bounds error, 
-                         * though the inner loop's declaration handles the upper-bound case (leaving just the
-                         * lower bound case to be checked). The joker's colour does not matter either way.
-                         */
-                        if (j > 0) {
-                            if ((currSequence.get(j + 1).getNumber() != currSequence.get(j - 1).getNumber() + 2) ||
-                                (currSequence.get(j + 1).getColour() != currSequence.get(j - 1).getColour())) {
-                               groupRunErrors[i][0] = j;
-                               break;
+            for (int j = 0; j < currSequence.size(); ++j) {
+                // Check for out of bounds numbers and where a joker is in between 2 offending tiles
+                if ((j > 0) && (j < currSequence.size() - 1)) {
+                    switch (currSequence.get(j).getNumber()) {
+                        case 0: // Jokers, noting that there may be 2 of them in a row
+                            if (!(currSequence.get(j-1).getColour().equals(currSequence.get(j+1).getColour())) ||
+                                 (currSequence.get(j-1).getColour().equals(currSequence.get(j+2).getColour())) ||
+                                 (currSequence.get(j-2).getColour().equals(currSequence.get(j+1).getColour()))) {
+                                groupRunErrors[i].setRunError("Colour mismatch overlapping with a joker/s");
+                                break;
                             }
-                        }
-                    default: // Non-jokers
-                        /* If the current tile is not a joker, either the following tile must be a joker
-                         * or anoher tile of the same colour (with the next number in the sequence).
-                         */
-                        if ((currSequence.get(j + 1).getNumber() != 0) &&
-                            ((currSequence.get(j).getNumber() != currSequence.get(j + 1).getNumber() - 1) ||
-                             (currSequence.get(j).getColour() != currSequence.get(j + 1).getColour()))
-                           ) {
-                            groupRunErrors[i][0] = j + 1;
+
+                            if (!((currSequence.get(j-1).getNumber() == currSequence.get(j+1).getNumber()-2) ||
+                                  (currSequence.get(j-2).getNumber() == currSequence.get(j+1).getNumber()-3) ||
+                                  (currSequence.get(j-1).getNumber() == currSequence.get(j+2).getNumber()-3))) {
+                                groupRunErrors[i].setRunError("Number mismatch overlapping with a joker/s");
+                                break;
+                            }
+                        case 1:
+                            groupRunErrors[i].setRunError("Cannot have a run with a 1 as a non-first tile");
                             break;
-                        }
-                    break;
+                        case 13:
+                            groupRunErrors[i].setRunError("Cannot have a run with a 13 as a non-last tile");
+                            break;
+                        default:
+                            break;
+                    }
+
+                    // Don't capture multiple errors per group (or run) check per sequence.
+                    if (!groupRunErrors[i].getRunError().equals("")) { continue; }
+                }
+                else if (j < currSequence.size() - 1) { // Either of the above conditions would have done.
+                    if ((currSequence.get(j+1).getNumber() != 0) &&
+                        (currSequence.get(j+1).getNumber() != currSequence.get(j).getNumber() + 1)) {
+                       groupRunErrors[i].setRunError("Cannot have a broken run sequence");
+                    }
+                    
+                    // Don't capture multiple errors per group (or run) check per sequence.
+                    if (!groupRunErrors[i].getRunError().equals("")) { continue; }
+
+                    if (!currSequence.get(j+1).getColour().equals(currSequence.get(j).getColour())) {
+                       groupRunErrors[i].setRunError("Cannot have multiple colours per run sequence");
+                    }
                 }
             }
         }
@@ -163,21 +152,14 @@ public class Rummikub {
 
         for (int i = 0; i < groupRunErrors.length; ++i) { // Count number of, and print errors.
             // A sequence should never be both a group and a run, but might be neither.
-            if (!((groupRunErrors[i][0] == -1) ^ (groupRunErrors[i][1] == -1))) {
+            if (!((groupRunErrors[i].getGroupError().equals("")) ^ (groupRunErrors[i].getRunError().equals("")))) {
                 numFalse++;
 
-                if (groupRunErrors[i][0] > -1) {
-                    System.out.print("Group-related error at sequence " + (i + 1) + " position " + groupRunErrors[i][0] + ".");
-                    System.out.print("Make sure that there are 3 or 4 tiles of separate colours ");
-                    System.out.println("but of the same number (excluding jokers in both senses).");
-                }
-
-                if (groupRunErrors[i][1] > -1) {
-                    System.out.print("Run-related error at sequence " + (i + 1) + " position " + groupRunErrors[i][1] + ".");
-                    System.out.println("Make sure that there are 3 or more tiles of the same colour in an ");
-                    System.out.println("increasing sequence (excluding jokers in both sense). ");
-                }
-            }            
+                System.out.println("Sequence " + (i + 1) + " errors");
+                System.out.println(groupRunErrors[i].getGroupError());
+                System.out.println(groupRunErrors[i].getRunError());
+                System.out.println();
+            }        
         }
 
         return numFalse == 0;
@@ -187,12 +169,36 @@ public class Rummikub {
      * A run is a 3-tile (or more) row of same-coloured tiles in ascending order.
      */
     public static boolean checkBoardValidity(ArrayList<ArrayList<Tile>> sequences) {
-        System.out.println(); // Separate from other console output
+        // Separate from other console output regardless of what might/mightn't be outputted.
+        System.out.println();
+        
+        // TODO: Needs reworking
         boolean lengthOK = checkBoardLength(sequences); // All sequences have at least 3 tiles
-        boolean jokerOK = checkBoardJokers(sequences); // No joker comes before 1 or after 13
         boolean groupRunOK = checkBoardSequences(sequences); // All sequences are either groups or runs
 
-        return lengthOK && jokerOK && groupRunOK;
+        // The 2nd function checks for run bounds.
+        return lengthOK && groupRunOK;
+    }
+
+    // Only checks against runs.
+    public static boolean checkRunBounds(ArrayList<Tile> currSequence, int currNum) {
+        int currSize = currSequence.size();
+
+        for (int j = 0; j < currSequence.size(); ++j) {
+            if ((j > 0) && (currSequence.get(j).getNumber() == 1) && (currSequence.get(0).getNumber() != 1)) {
+                System.out.print("Sequence " + (currNum + 1) + ": The number 1 must only be on ");
+                System.out.println("the first tile, unless part of a group");
+                return false;
+            }
+
+            if ((j < currSize - 1) && (currSequence.get(j).getNumber() == 13) && (currSequence.get(currSize - 1).getNumber() != 13)) {
+                System.out.print("Sequence " + (currNum + 1) + ": The number 13 must only be on ");
+                System.out.println("the last tile, unless part of a group");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static boolean emptyRack(HashMap<String, ArrayList<Tile>> tiles, int currPlayer) {
@@ -488,7 +494,7 @@ public class Rummikub {
                         }
                         else {
                             validInput = false;
-                            System.out.println("Please fix any mistakes and try again");
+                            System.out.println("Please use the above commands to any mistakes and try again");
                         }
 
                         break;
