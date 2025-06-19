@@ -83,16 +83,18 @@ def printTileList(listName, tileList):
     if len(tileList) == 0:
         print("\n" + listName, "is empty")
     else:
-        print("\n" + listName + ":")
-        for i in range(len(tileList)):
-            if listName == "Board":
+        print("\n" + listName + ":", end = " ")
+        if listName == "Board":
+            for i in range(len(tileList)):
                 print("Sequence", str(i+1), end = ": [")
                 for j in range(len(tileList[i])):
                     print(tileList[i][j], end = ']\n' if j == len(tileList[i]) - 1 else ", ")
-            else:
-                print(": [", end = " ")
-                for j in range(len(tileList)):
-                    print(tileList[i], end = ']\n' if j == len(tileList) - 1 else ", ")
+        else:
+            for i in range(len(tileList)):
+                if i == 0:
+                    print("[", end = "")
+                
+                print(tileList[i], end = ", " if i < len(tileList) - 1 else "]")
 
 if __name__ == '__main__': # Main method
     print("Welcome to Rummikub!", end = " ")
@@ -124,5 +126,14 @@ if __name__ == '__main__': # Main method
     board = [pool, player1Tiles, player2Tiles] # 2D-array of sequences
     while not finished: # Game-wide flow
         printTileList("Board", board)
+        match currPlayer:
+            case 1:
+                printTileList("Player 1's rack", player1Tiles)
+            case 2:
+                printTileList("Player 2's rack", player2Tiles)
+            case 3:
+                printTileList("Player 3's rack", player3Tiles)
+            case 4:
+                printTileList("Player 4's rack", player4Tiles)
 
         finished = True
