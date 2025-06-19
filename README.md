@@ -1,0 +1,2 @@
+## OUTDATED_ prefix on the Java files ##
+It looks like Java is the wrong programming language (I have restarted in Python), since it doesn't allow the flexibility of returning only what I need from the various functions.

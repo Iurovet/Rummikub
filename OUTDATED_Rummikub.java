@@ -2,20 +2,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Rummikub {
+public class OUTDATED_Rummikub {
     // Might need to return 2-4 player's racks
-    public static HashMap<String, ArrayList<Tile>> allocateTilesAtStart(int numPlayers) {
-        HashMap<String, ArrayList<Tile>> tileLists = new HashMap<String, ArrayList<Tile>>();
+    public static HashMap<String, ArrayList<OUTDATED_Tile>> allocateTilesAtStart(int numPlayers) {
+        HashMap<String, ArrayList<OUTDATED_Tile>> tileLists = new HashMap<String, ArrayList<OUTDATED_Tile>>();
         
-        ArrayList<Tile> poolTiles = putTilesInPool();
-        ArrayList<Tile> p1Tiles = new ArrayList<Tile>();
-        ArrayList<Tile> p2Tiles = new ArrayList<Tile>();
-        ArrayList<Tile> p3Tiles = new ArrayList<Tile>();
-        ArrayList<Tile> p4Tiles = new ArrayList<Tile>();
+        ArrayList<OUTDATED_Tile> poolTiles = putTilesInPool();
+        ArrayList<OUTDATED_Tile> p1Tiles = new ArrayList<OUTDATED_Tile>();
+        ArrayList<OUTDATED_Tile> p2Tiles = new ArrayList<OUTDATED_Tile>();
+        ArrayList<OUTDATED_Tile> p3Tiles = new ArrayList<OUTDATED_Tile>();
+        ArrayList<OUTDATED_Tile> p4Tiles = new ArrayList<OUTDATED_Tile>();
 
         // Allocate 14 random tiles to each player.
         for (int i = 0; i < 14 * numPlayers; ++i) {
-            Tile t1 = poolTiles.get(getRandom(0, poolTiles.size() - 1));
+            OUTDATED_Tile t1 = poolTiles.get(getRandom(0, poolTiles.size() - 1));
             
             switch(i / 14) {
                 case 0:
@@ -47,7 +47,7 @@ public class Rummikub {
         return tileLists;
     }
 
-    public static boolean checkBoardLength(ArrayList<ArrayList<Tile>> sequences) {
+    public static boolean checkBoardLength(ArrayList<ArrayList<OUTDATED_Tile>> sequences) {
         for (int i = 0; i < sequences.size(); ++i) {
             if (sequences.get(i).size() < 3) {
                 System.out.println("Sequence " + (i + 1) + " is not long enough");
@@ -58,18 +58,18 @@ public class Rummikub {
         return true;
     }
 
-    public static boolean checkBoardSequences(ArrayList<ArrayList<Tile>> sequences) {
+    public static boolean checkBoardSequences(ArrayList<ArrayList<OUTDATED_Tile>> sequences) {
         /* Only the 1st group- and run-related errors are captured for simplicity.
          * Also, each element must be specifically initialised as an object.
          */
-        ErrorMessage[] groupRunErrors = new ErrorMessage[sequences.size()];
+        OUTDATED_ErrorMessage[] groupRunErrors = new OUTDATED_ErrorMessage[sequences.size()];
         for (int i = 0; i < groupRunErrors.length; ++i) {
-            groupRunErrors[i] = new ErrorMessage();
+            groupRunErrors[i] = new OUTDATED_ErrorMessage();
         }
         
         // Groups
         for (int i = 0; i < sequences.size(); ++i) {
-            ArrayList<Tile> currSequence = sequences.get(i);
+            ArrayList<OUTDATED_Tile> currSequence = sequences.get(i);
             for (int j = 0; j < currSequence.size(); ++j) {
                 // Make sure colours aren't duplicated
                 ArrayList<String> usedColours = new ArrayList<String>();
@@ -100,7 +100,7 @@ public class Rummikub {
 
         // Runs
         for (int i = 0; i < sequences.size(); ++i) {
-            ArrayList<Tile> currSequence = sequences.get(i);
+            ArrayList<OUTDATED_Tile> currSequence = sequences.get(i);
             for (int j = 0; j < currSequence.size(); ++j) {
                 // Check for out of bounds numbers and where a joker is in between 2 offending tiles
                 if ((j > 0) && (j < currSequence.size() - 1)) {
@@ -168,7 +168,7 @@ public class Rummikub {
     /* A group is a 3- or 4-tile row of same-numbered tiles but different colours.
      * A run is a 3-tile (or more) row of same-coloured tiles in ascending order.
      */
-    public static boolean checkBoardValidity(ArrayList<ArrayList<Tile>> sequences) {
+    public static boolean checkBoardValidity(ArrayList<ArrayList<OUTDATED_Tile>> sequences) {
         // Separate from other console output regardless of what might/mightn't be outputted.
         System.out.println();
         
@@ -181,7 +181,7 @@ public class Rummikub {
     }
 
     // Only checks against runs.
-    public static boolean checkRunBounds(ArrayList<Tile> currSequence, int currNum) {
+    public static boolean checkRunBounds(ArrayList<OUTDATED_Tile> currSequence, int currNum) {
         int currSize = currSequence.size();
 
         for (int j = 0; j < currSequence.size(); ++j) {
@@ -201,7 +201,7 @@ public class Rummikub {
         return true;
     }
 
-    public static boolean emptyRack(HashMap<String, ArrayList<Tile>> tiles, int currPlayer) {
+    public static boolean emptyRack(HashMap<String, ArrayList<OUTDATED_Tile>> tiles, int currPlayer) {
         // The keys are (Pool | Player 1-4) tiles
         switch(currPlayer){
             case 1:
@@ -229,7 +229,7 @@ public class Rummikub {
         return (int)(Math.random() * (max - min + 1)) + min;
     }
 
-    public static void printBoard (ArrayList<ArrayList<Tile>> sequences) {
+    public static void printBoard (ArrayList<ArrayList<OUTDATED_Tile>> sequences) {
         System.out.println();
         
         int i = 0;
@@ -251,9 +251,9 @@ public class Rummikub {
         if (i == 0) { System.out.println("Board is empty"); }
     }
 
-    public static void printPlayerTiles (HashMap<String, ArrayList<Tile>> tiles, int currPlayer) {        
+    public static void printPlayerTiles (HashMap<String, ArrayList<OUTDATED_Tile>> tiles, int currPlayer) {        
         // The keys are (Pool | Player 1-4) tiles
-        ArrayList<Tile> currTiles = new ArrayList<Tile>();
+        ArrayList<OUTDATED_Tile> currTiles = new ArrayList<OUTDATED_Tile>();
         
         switch(currPlayer){
             case 1:
@@ -301,32 +301,32 @@ public class Rummikub {
         System.out.println();
     }
 
-    public static ArrayList<Tile> putTilesInPool() {
-        ArrayList<Tile> poolTiles = new ArrayList<Tile>();
+    public static ArrayList<OUTDATED_Tile> putTilesInPool() {
+        ArrayList<OUTDATED_Tile> poolTiles = new ArrayList<OUTDATED_Tile>();
         final String[] COLOURS = {"Blue", "Orange", "Black", "Red"};
 
         // Add non-jokers
         for (int i = 1; i <= 13; ++i) {
             for (String c1 : COLOURS) {
                 for (int j = 0; j < 2; ++j) {
-                    poolTiles.add(new Tile(c1, i));
+                    poolTiles.add(new OUTDATED_Tile(c1, i));
                 }
             }
         }
 
         // Add jokers
-        poolTiles.add(new Tile("Black"));
-        poolTiles.add(new Tile("Red"));
+        poolTiles.add(new OUTDATED_Tile("Black"));
+        poolTiles.add(new OUTDATED_Tile("Red"));
        
         return poolTiles;
     }
 
-    public static HashMap<String, ArrayList<Tile>> randomPoolTile(HashMap<String, ArrayList<Tile>> tileLists, int currPlayer) {
+    public static HashMap<String, ArrayList<OUTDATED_Tile>> randomPoolTile(HashMap<String, ArrayList<OUTDATED_Tile>> tileLists, int currPlayer) {
         if (tileLists.get("Pool tiles").size() == 0) {
             System.out.println("Sorry, no more tiles left. Your move has still been forfeited");
         }
         
-        Tile t1 = tileLists.get("Pool tiles").get(getRandom(0, tileLists.get("Pool tiles").size() - 1));
+        OUTDATED_Tile t1 = tileLists.get("Pool tiles").get(getRandom(0, tileLists.get("Pool tiles").size() - 1));
         
         tileLists.get("Player " + currPlayer + " tiles").add(t1);
         tileLists.get("Pool tiles").remove(t1);
@@ -372,7 +372,7 @@ public class Rummikub {
     }
 
     // Currently assumes that the sequence will be split so as to not leave empty spaces
-    public static ArrayList<ArrayList<Tile>> splitSequence(ArrayList<ArrayList<Tile>> sequences, Scanner scnr) {
+    public static ArrayList<ArrayList<OUTDATED_Tile>> splitSequence(ArrayList<ArrayList<OUTDATED_Tile>> sequences, Scanner scnr) {
         boolean validInput = false;
         int sequenceNumber = 0;
         int splittingPosition = 0;
@@ -425,7 +425,7 @@ public class Rummikub {
          * Instead of adding at the next available index, must add at the beginning to
          * preserve order. Anything pre-existing will be shifted by 1.
          */
-        ArrayList<Tile> newSequence = new ArrayList<Tile>();
+        ArrayList<OUTDATED_Tile> newSequence = new ArrayList<OUTDATED_Tile>();
         for (int i = sequences.get(sequenceNumber).size() - 1; i >= splittingPosition; --i) {
             newSequence.add(0, sequences.get(sequenceNumber).get(i));
             sequences.get(sequenceNumber).remove(i);
@@ -437,7 +437,7 @@ public class Rummikub {
     }
 
     public static void main(String[] args) {
-        ArrayList<ArrayList<Tile>> sequences = new ArrayList<ArrayList<Tile>>();
+        ArrayList<ArrayList<OUTDATED_Tile>> sequences = new ArrayList<ArrayList<OUTDATED_Tile>>();
         Scanner scnr = new Scanner(System.in);
 
         // 2nd parameter in setStartPlayer() allows a random player to start
@@ -447,7 +447,7 @@ public class Rummikub {
         /* The keys are (Pool | Player 1-4) tiles. Cannot include the sequences list as it is
          * 2D (must be able to store which seqeuence a tile belongs to)
          */
-        HashMap<String, ArrayList<Tile>> tileLists = allocateTilesAtStart(numPlayers);
+        HashMap<String, ArrayList<OUTDATED_Tile>> tileLists = allocateTilesAtStart(numPlayers);
         
         /* Each player must put down 30 or more points worth of their
          * own tiles (without touching any other tiles).
@@ -476,8 +476,8 @@ public class Rummikub {
                 validInput = true;
 
                 // Store the game state as of the most recent move in case of desire to abort move.
-                final ArrayList<ArrayList<Tile>> SEQUENCES_LAST_VERSION = sequences;
-                final HashMap<String, ArrayList<Tile>> TILELISTS_LAST_VERSION = tileLists;
+                final ArrayList<ArrayList<OUTDATED_Tile>> SEQUENCES_LAST_VERSION = sequences;
+                final HashMap<String, ArrayList<OUTDATED_Tile>> TILELISTS_LAST_VERSION = tileLists;
 
                 String userInput = scnr.nextLine();
                 switch (userInput.toUpperCase()){
