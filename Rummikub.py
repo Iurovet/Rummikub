@@ -31,7 +31,7 @@ class Tile:
         return self.number
     
 def allocateTiles(numPlayers):
-    pool, player1Tiles, player2Tiles, player3Tiles, player4Tiles = [], [], [], [], []
+    pool, player1Rack, player2Rack, player3Rack, player4Rack = [], [], [], [], []
     
     # Add non-jokers
     for i in range(1, 13+1): # Tile numbers are in range[1, 13] but end index is exclusive
@@ -49,15 +49,15 @@ def allocateTiles(numPlayers):
         # By cycling between the number of tiles (as opposed to that of the players), we avoid assigning tiles to extra players (and potentially in an uneven fashion)
         match math.floor(i / 14):
             case 0:
-                player1Tiles.append(newTile)
+                player1Rack.append(newTile)
             case 1:
-                player2Tiles.append(newTile)
+                player2Rack.append(newTile)
             case 2:
-                player3Tiles.append(newTile)
+                player3Rack.append(newTile)
             case 3:
-                player4Tiles.append(newTile)
+                player4Rack.append(newTile)
 
-    return pool, player1Tiles, player2Tiles, player3Tiles, player4Tiles
+    return pool, [player1Rack, player2Rack, player3Rack, player4Rack] # Easier if the racks are in one array
 
 def getNumPlayers():
     numPlayers = None
@@ -83,8 +83,8 @@ def printTileList(listName, tileList):
     if len(tileList) == 0:
         print("\n" + listName, "is empty")
     else:
-        print("\n" + listName + ":", end = " ")
-        if listName == "Board":
+        print("\n" + listName + ":")
+        if listName == "Board":            
             for i in range(len(tileList)):
                 print("Sequence", str(i+1), end = ": [")
                 for j in range(len(tileList[i])):
@@ -94,7 +94,23 @@ def printTileList(listName, tileList):
                 if i == 0:
                     print("[", end = "")
                 
-                print(tileList[i], end = ", " if i < len(tileList) - 1 else "]")
+                print(tileList[i], end = ", " if i < len(tileList) - 1 else "]\n\n")
+
+def printUserCommands(numPoolTiles, numSequences):
+    print("Choose from one of the following commands (case insensitive):")
+    print("Abort: Revert game state back to the last move")
+    print("Finish: Finish current move and save current game state.")
+    
+    if numSequences > 0:
+        # print("Split: Split a chosen sequence at the specified turn. ")
+        # print("Note: Currently assumes there will be no gaps left in the middle")
+        pass
+    
+    if numPoolTiles > 0:
+        print("Pool: Grab 1 tile from the pool (forfeits turn)")
+
+    # Extra blank line that need not be moved around as a result of building this method.
+    print()   
 
 if __name__ == '__main__': # Main method
     print("Welcome to Rummikub!", end = " ")
@@ -116,25 +132,42 @@ if __name__ == '__main__': # Main method
         currPlayer = random.randint(1, numPlayers)
     print("Player", currPlayer, "is starting")
 
-    pool, player1Tiles, player2Tiles, player3Tiles, player4Tiles = allocateTiles(numPlayers)
+    # Allocate tiles to the pool and all players
+    pool, playerRacks = allocateTiles(numPlayers) # Again, it's easier if the player racks are all under one array
     if numPlayers < 4: # The respective lists should be empty anyway, but destroy them just in case
-        del player4Tiles
+        del playerRacks[3]
         if numPlayers < 3:
-            del player3Tiles
+            del playerRacks[2]
 
     finished = False
     board = [] # 2D-array of sequences
     while not finished: # Game-wide flow
-        printTileList("Board", board)
-        match currPlayer: # Print the current player's tile rack.
-            case 1:
-                printTileList("Player 1's rack", player1Tiles)
-            case 2:
-                printTileList("Player 2's rack", player2Tiles)
-            case 3:
-                printTileList("Player 3's rack", player3Tiles)
-            case 4:
-                printTileList("Player 4's rack", player4Tiles)
+        currRack = playerRacks[currPlayer - 1]
+
+        printTileList("Board", board) # Print the board
+        printTileList("Player " + str(currPlayer) + "'s rack", currRack)
+        
+        # Copy the current rack so that it can be returned to later if need be.
+        draftRack = currRack.copy()
+        poppedTiles = [] # Keep track of tiles grabbed from the pool
+        
+        while True:
+            printUserCommands(len(pool), sum(len(sequence) for sequence in board)) # Number of tiles in the pool and board, respectively
+            command = input().lower() # Could also use upper(), since case insensitivity is the goal
+            match command:
+                case "abort": # Revert all changes
+                    pool.extend(poppedTiles) # Return any required tiles back to the pool
+                    currRack = draftRack.copy() # Copy the draft rack back to the working copy
+                    break
+                case "finish": # Finalise all changes
+                    break
+                case "pool" if len(pool) > 0: # Randomly assign a tile from the pool if possible
+                    randTile = pool.pop(random.randint(0, len(pool) - 1))
+                    draftRack.append(randTile)
+                    poppedTiles.append(randTile)
+                    break
+                case _:
+                    print("Error: Command not recognised")
 
         # currPlayer = 1 if currPlayer == numPlayers else currPlayer + 1
         finished = True
