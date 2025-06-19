@@ -79,15 +79,20 @@ def getStartPlayer():
     
     return startPlayer
 
-def printBoard(board):
-    if len(board) == 0:
-        print("\nBoard is empty")
+def printTileList(listName, tileList):
+    if len(tileList) == 0:
+        print("\n" + listName, "is empty")
     else:
-        print("\nBoard:")
-        for i in range(len(board)):
-            print("Sequence", str(i+1), end = ": [")
-            for j in range(len(board[i])):
-                print(board[i][j], end = ']\n' if j == len(board[i]) - 1 else ", ")
+        print("\n" + listName + ":")
+        for i in range(len(tileList)):
+            if listName == "Board":
+                print("Sequence", str(i+1), end = ": [")
+                for j in range(len(tileList[i])):
+                    print(tileList[i][j], end = ']\n' if j == len(tileList[i]) - 1 else ", ")
+            else:
+                print(": [", end = " ")
+                for j in range(len(tileList)):
+                    print(tileList[i], end = ']\n' if j == len(tileList) - 1 else ", ")
 
 if __name__ == '__main__': # Main method
     print("Welcome to Rummikub!", end = " ")
@@ -116,7 +121,8 @@ if __name__ == '__main__': # Main method
             del player3Tiles
 
     finished = False
-    board = [] # 2D-array of sequences
+    board = [pool, player1Tiles, player2Tiles] # 2D-array of sequences
     while not finished: # Game-wide flow
-        printBoard(board)
+        printTileList("Board", board)
+
         finished = True
