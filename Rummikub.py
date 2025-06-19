@@ -34,16 +34,16 @@ def allocateTiles(numPlayers):
     pool, player1Tiles, player2Tiles, player3Tiles, player4Tiles = [], [], [], [], []
     
     # Add non-jokers
-    for i in range (1, 13+1): # Tile numbers are in range [1, 13] but end index is exclusive
+    for i in range(1, 13+1): # Tile numbers are in range[1, 13] but end index is exclusive
         for c1 in ["Blue", "Orange", "Black", "Red"]:
-            for j in range (2):
+            for j in range(2):
                 pool.append(Tile(c1, i))
 
     # Add jokers
     pool.append(Tile("Black"))
     pool.append(Tile("Red"))
 
-    for i in range (0, 14 * numPlayers): # Add 14 tiles to each player by random assignment
+    for i in range(0, 14 * numPlayers): # Add 14 tiles to each player by random assignment
         newTile = pool.pop(random.randint(0, len(pool) - 1)) # Analogous to Ctrl+X
         
         # By cycling between the number of tiles (as opposed to that of the players), we avoid assigning tiles to extra players (and potentially in an uneven fashion)
@@ -79,6 +79,16 @@ def getStartPlayer():
     
     return startPlayer
 
+def printBoard(board):
+    if len(board) == 0:
+        print("\nBoard is empty")
+    else:
+        print("\nBoard:")
+        for i in range(len(board)):
+            print("Sequence", str(i+1), end = ": [")
+            for j in range(len(board[i])):
+                print(board[i][j], end = ']\n' if j == len(board[i]) - 1 else ", ")
+
 if __name__ == '__main__': # Main method
     print("Welcome to Rummikub!", end = " ")
     
@@ -104,3 +114,9 @@ if __name__ == '__main__': # Main method
         del player4Tiles
         if numPlayers < 3:
             del player3Tiles
+
+    finished = False
+    board = [] # 2D-array of sequences
+    while not finished: # Game-wide flow
+        printBoard(board)
+        finished = True
