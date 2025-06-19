@@ -104,15 +104,15 @@ if __name__ == '__main__': # Main method
         numPlayers = getNumPlayers()
     
     # Choose the starting player explicitly or randomly
-    startPlayer = getStartPlayer()
-    while (startPlayer < 1 or (startPlayer > numPlayers and startPlayer != 5)):
+    currPlayer = getStartPlayer()
+    while (currPlayer < 1 or (currPlayer > numPlayers and currPlayer != 5)):
         print("Error: Player number must be between 1 and " + str(numPlayers) + " (or 5 for random)", end = " ")
-        startPlayer = getStartPlayer()
+        currPlayer = getStartPlayer()
     
     # Randomly assign starting player (if necessary) and print out the final decision
-    if startPlayer == 5:
-        startPlayer = random.randint(1, numPlayers)
-    print("Player", startPlayer, "is starting")
+    if currPlayer == 5:
+        currPlayer = random.randint(1, numPlayers)
+    print("Player", currPlayer, "is starting")
 
     pool, player1Tiles, player2Tiles, player3Tiles, player4Tiles = allocateTiles(numPlayers)
     if numPlayers < 4: # The respective lists should be empty anyway, but destroy them just in case
