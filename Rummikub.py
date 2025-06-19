@@ -123,7 +123,7 @@ if __name__ == '__main__': # Main method
             del player3Tiles
 
     finished = False
-    board = [pool, player1Tiles, player2Tiles] # 2D-array of sequences
+    board = [] # 2D-array of sequences
     while not finished: # Game-wide flow
         printTileList("Board", board)
         match currPlayer:
