@@ -126,7 +126,7 @@ if __name__ == '__main__': # Main method
     board = [] # 2D-array of sequences
     while not finished: # Game-wide flow
         printTileList("Board", board)
-        match currPlayer:
+        match currPlayer: # Print the current player's tile rack.
             case 1:
                 printTileList("Player 1's rack", player1Tiles)
             case 2:
@@ -136,4 +136,5 @@ if __name__ == '__main__': # Main method
             case 4:
                 printTileList("Player 4's rack", player4Tiles)
 
+        # currPlayer = 1 if currPlayer == numPlayers else currPlayer + 1
         finished = True
