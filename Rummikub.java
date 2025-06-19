@@ -364,7 +364,7 @@ public class Rummikub {
         }
 
         if (startPlayer == 5) {// Inform of starting player, if randomly selected
-            startPlayer = getRandom(1, 4);
+            startPlayer = getRandom(1, numPlayers);
             System.out.println("Player " + startPlayer + " is starting");
         }
         
