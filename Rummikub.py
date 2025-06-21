@@ -163,5 +163,8 @@ if __name__ == '__main__': # Main method
                 case _:
                     print("Error: Command not recognised")
 
-        # currPlayer = 1 if currPlayer == numPlayers else currPlayer + 1
-        # finished = True
+        if len(playerRacks[currPlayer - 1]) == 0: # Current player emptied all their tiles
+            print("Player", currPlayer, "won!")
+            finished = True
+        else: # Next player
+            currPlayer = 1 if currPlayer == numPlayers else currPlayer + 1
