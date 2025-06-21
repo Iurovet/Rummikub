@@ -30,6 +30,22 @@ def allocateTiles(numPlayers):
 
     return pool, [player1Rack, player2Rack, player3Rack, player4Rack] # Easier if the racks are in one array
 
+def checkGroup(sequence):
+    # Returns true if the sequence contains 3 or 4 tiles of varying colour (containing the same numbers and/or jokers)
+    if len(sequence) > 4:
+        return False
+
+    # Get separate lists of the numbers and colours found among the non-jokers
+    (numbersList, coloursList) = [(x.numbersList, x.coloursList) for x in sequence if x.getNumber() > 0]
+    
+    if len(set(numbersList)) > 1: # Must only find one unique number besides jokers
+        return False    
+    if len(coloursList) != len(set(coloursList)): # Any colour repeats will only show up in the 1st list.
+        return False
+
+def checkRun(sequence):
+    pass
+
 def getNumPlayers():
     numPlayers = None
     
@@ -144,6 +160,8 @@ if __name__ == '__main__': # Main method
             printUserCommands(len(pool), sum(len(sequence) for sequence in board)) # Number of tiles in the pool and board, respectively
             command = input().lower() # Could also use upper(), since case insensitivity is the goal
 
+            # If there is a simple condition like empty list that can invalidate a command, the user cannot see it nor will
+            # they be able to enter it regardless. However, it's up to the user to check if the board is valid.
             match command:
                 case "abort": # Discard all changes
                     pool.extend(poppedTiles) # Return any required tiles back to the pool
