@@ -1,5 +1,5 @@
-import math, random
-from Objects import * # All classes are defined there,
+import math, random # Floor function and random number, respectively
+from Objects import * # Class definitions
     
 def allocateTiles(numPlayers):
     pool, player1Rack, player2Rack, player3Rack, player4Rack = [], [], [], [], []
