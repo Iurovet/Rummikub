@@ -10,9 +10,9 @@ def allocateTiles(numPlayers):
             for j in range(2):
                 pool.append(Tile(c1, i))
 
-    # # Add jokers
-    # pool.append(Tile("Black"))
-    # pool.append(Tile("Red"))
+    # Add jokers
+    pool.append(Tile("Black"))
+    pool.append(Tile("Red"))
 
     for i in range(0, 14 * numPlayers): # Add 14 tiles to each player by random assignment
         newTile = pool.pop(random.randint(0, len(pool) - 1)) # Analogous to Ctrl+X
@@ -72,7 +72,6 @@ def checkRun(sequence):
         return False
     
     return True # If all checks have passed
-
 
 def getNumPlayers():
     numPlayers = None
