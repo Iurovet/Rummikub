@@ -166,9 +166,11 @@ if __name__ == '__main__': # Main method
                 case "abort": # Discard all changes
                     pool.extend(poppedTiles) # Return any required tiles back to the pool
                     break
-                case "finish" if validBoard(board): # Finalise all changes, assuming the board is in a legal state.
-                    playerRacks[currPlayer - 1] = draftRack.copy() # Copy the draft rack back to the working copy.
-                    break
+                case "finish": # Finalise all changes, assuming the board is in a legal state.
+                    if validBoard(board):
+                        playerRacks[currPlayer - 1] = draftRack.copy() # Copy the draft rack back to the working copy.
+                        break
+                    continue
                 case "pool" if len(pool) > 0: # Randomly assign a tile from the pool if possible
                     randTile = pool.pop(random.randint(0, len(pool) - 1))
                     draftRack.append(randTile)
