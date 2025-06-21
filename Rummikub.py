@@ -30,21 +30,49 @@ def allocateTiles(numPlayers):
 
     return pool, [player1Rack, player2Rack, player3Rack, player4Rack] # Easier if the racks are in one array
 
+# Returns true if the sequence contains 3 or 4 tiles of varying colour (containing the same numbers and/or jokers)
 def checkGroup(sequence):
-    # Returns true if the sequence contains 3 or 4 tiles of varying colour (containing the same numbers and/or jokers)
-    if len(sequence) > 4:
+    if len(sequence) > 4: # A 5 (or more)-tile sequence is guaranteed to repeat colours, irrespective of jokers
         return False
 
     # Get separate lists of the numbers and colours found among the non-jokers
-    (numbersList, coloursList) = [(x.numbersList, x.coloursList) for x in sequence if x.getNumber() > 0]
+    (numbersList, coloursList) = [(x.getNumber(), x.getColour()) for x in sequence if x.getNumber() > 0]
     
     if len(set(numbersList)) > 1: # Must only find one unique number besides jokers
         return False    
     if len(coloursList) != len(set(coloursList)): # Any colour repeats will only show up in the 1st list.
         return False
+    
+    return True # If all checks have passed
 
+# Returns true if the sequence is strictly increasing and of the same colour
 def checkRun(sequence):
-    pass
+    # Get separate lists of the numbers and colours found among the non-jokers
+    (numbersList, coloursList) = [(x.getNumber(), x.getColour()) for x in sequence if x.getNumber() > 0]
+
+    if len(set(coloursList)) > 1: # Must only find one unique colour besides jokers
+        return False    
+    if len(numbersList) != len(set(numbersList)): # Any number repeats will only show up in the 1st list.
+        return False
+
+    # Check if the non-jokers are in the right order
+    non_zeros = [x for x in numbersList if x != 0]
+    if non_zeros != sorted(non_zeros):
+        return False
+    
+    # Check if there are missing numbers not covered by jokers (may not be possible using list manipulations/comprehensions from above)
+    currNumber = numbersList[0]
+    for i in range(1, len(numbersList)):
+        if numbersList[i] not in (numbersList[i-1] + 1, 0): # Perform 2 comparisons in one go
+            return False
+        currNumber += 1
+    
+    # If duplicate numbers have been caught earlier, there has to be a joker at at least one edge index
+    if any([1, 13]) in numbersList[1:-1]:
+        return False
+    
+    return True # If all checks have passed
+
 
 def getNumPlayers():
     numPlayers = None
