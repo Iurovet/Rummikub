@@ -10,9 +10,9 @@ def allocateTiles(numPlayers):
             for j in range(2):
                 pool.append(Tile(c1, i))
 
-    # Add jokers
-    pool.append(Tile("Black"))
-    pool.append(Tile("Red"))
+    # # Add jokers
+    # pool.append(Tile("Black"))
+    # pool.append(Tile("Red"))
 
     for i in range(0, 14 * numPlayers): # Add 14 tiles to each player by random assignment
         newTile = pool.pop(random.randint(0, len(pool) - 1)) # Analogous to Ctrl+X
@@ -82,6 +82,28 @@ def printUserCommands(numPoolTiles, numSequences):
 
     # Extra blank line that need not be moved around as a result of building this method.
     print()   
+
+def validBoard(board):
+    # # These are the following possible errors (if a sequence is valid, only one of 2a and 2b will be triggered):
+    # # 1. A sequence containing < 3 tiles
+    # # 2a. A sequence is not a group (i.e. the pattern is not entirely colour-based)
+    # # 2b. A sequence is not a run (i.e. the pattern is not entirely number-based)
+
+    # errorMessageList = []
+    # for index, sequence in board:
+    #     # Error 1 from above
+    #     if len(sequence) < 3:
+    #         errorMessageList.add(ErrorMessage("Sequence", index, "has < 3 tiles"))
+    #         continue
+               
+    #     isGroup, isRun = checkGroup(sequence), checkRun(sequence)
+    #     if not(isGroup ^ isRun): # All valid sequences are either groups or runs, not neither nor both.
+    #         errorMessageList.append(ErrorMessage("Sequence", index, "must strictly increase or change colours, not neither nor both"))
+    #         continue
+
+    # for em in errorMessageList: print("Error:", em)
+    # return len(errorMessageList) == 0
+    return True # Temporary placeholder whilst the above hasn't been finished
 
 if __name__ == '__main__': # Main method
     print("Welcome to Rummikub!", end = " ")
