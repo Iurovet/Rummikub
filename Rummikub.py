@@ -135,12 +135,11 @@ if __name__ == '__main__': # Main method
     board = [] # 2D-array of sequences
     finished = False
     while not finished: # Game-wide flow
-        currRack = playerRacks[currPlayer - 1]
-        draftRack = currRack.copy() # Copy the current rack so that it can be returned to later if need be
+        draftRack = playerRacks[currPlayer - 1].copy() # Copy the current rack so that it can be returned to later if need be
         poppedTiles = [] # Keep track of tiles grabbed from the pool
         
         printTileList("Board", board) # Print the board
-        printTileList("Player " + str(currPlayer) + "'s rack", currRack) # Print the current rack
+        printTileList("Player " + str(currPlayer) + "'s rack", playerRacks[currPlayer - 1]) # Print the current rack
         while True: # Turn-wide flow
             printUserCommands(len(pool), sum(len(sequence) for sequence in board)) # Number of tiles in the pool and board, respectively
             command = input().lower() # Could also use upper(), since case insensitivity is the goal
@@ -149,9 +148,8 @@ if __name__ == '__main__': # Main method
                 case "abort": # Discard all changes
                     pool.extend(poppedTiles) # Return any required tiles back to the pool
                     break
-                case "finish": # Finalise all changes
-                    # Copy the draft rack back to the working copy. Can't use currRack as it's not initialised between outer-loop iterations
-                    playerRacks[currPlayer - 1] = draftRack.copy()
+                case "finish" if validBoard(board): # Finalise all changes, assuming the board is in a legal state.
+                    playerRacks[currPlayer - 1] = draftRack.copy() # Copy the draft rack back to the working copy.
                     break
                 case "pool" if len(pool) > 0: # Randomly assign a tile from the pool if possible
                     randTile = pool.pop(random.randint(0, len(pool) - 1))
