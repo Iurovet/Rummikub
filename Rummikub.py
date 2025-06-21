@@ -146,7 +146,7 @@ def validBoard(board):
     #         errorMessageList.append(ErrorMessage("Sequence", index, "must strictly increase or change colours, not neither nor both"))
     #         continue
 
-    # for em in errorMessageList: print("Error:", em)
+    # for em in errorMessageList: print(em)
     # return len(errorMessageList) == 0
     return True # Temporary placeholder whilst the above hasn't been finished
 
