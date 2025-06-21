@@ -140,6 +140,7 @@ def validBoard(board):
     #         errorMessageList.add(ErrorMessage("Sequence", index, "has < 3 tiles"))
     #         continue
                
+    #     # Error 2a, 2b from above
     #     isGroup, isRun = checkGroup(sequence), checkRun(sequence)
     #     if not(isGroup ^ isRun): # All valid sequences are either groups or runs, not neither nor both.
     #         errorMessageList.append(ErrorMessage("Sequence", index, "must strictly increase or change colours, not neither nor both"))
