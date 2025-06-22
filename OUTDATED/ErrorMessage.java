@@ -1,4 +1,4 @@
-public class OUTDATED_ErrorMessage {
+public class ErrorMessage {
     private String groupError = "", runError = "";
     
     public void setGroupError(String groupError) { this.groupError = groupError; }
